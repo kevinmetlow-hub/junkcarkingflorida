@@ -683,10 +683,10 @@ var MM = {
   "Other":["Other / Not Listed"]
 };
 
-var DB = {"Acura":650,"AMC":250,"Audi":700,"BMW":750,"Buick":500,"Cadillac":600,"Chevrolet":550,"Chrysler":450,"Dodge":500,"Ford":550,"GMC":550,"Honda":600,"Hummer":600,"Hyundai":500,"Infiniti":650,"Isuzu":350,"Jaguar":650,"Jeep":600,"Kia":480,"Land Rover":700,"Lexus":750,"Lincoln":600,"Mazda":520,"Mercedes-Benz":750,"Mercury":420,"Mitsubishi":450,"Nissan":520,"Oldsmobile":350,"Pontiac":400,"Ram":560,"Saab":380,"Saturn":380,"Scion":400,"Smart":300,"Subaru":520,"Tesla":1200,"Toyota":650,"Volkswagen":520,"Volvo":550,"Other":400};
-var DM = {"cond_Good":1.0,"cond_Fair":0.80,"cond_Poor":0.60,"cond_Parts Only":0.40,"runs_Runs & Drives":1.0,"runs_Starts won't drive":0.85,"runs_Does not start":0.70,"title_Title":1.0,"title_Registration":0.90,"title_No Documentation":0.75,"cat_Original":1.0,"cat_Not Sure":0.92,"cat_Missing / Replaced":0.80,"mile_Under 50,000":1.15,"mile_50,000 – 100,000":1.05,"mile_100,000 – 150,000":1.0,"mile_150,000 – 200,000":0.92,"mile_200,000+":0.82,"mile_Unknown":0.90};
+var DB = Object.keys(MM).reduce(function(acc,k){acc[k]=400;return acc;},{});
+var DM = {"cond_Good":1.00,"cond_Fair":1.00,"cond_Poor":1.00,"cond_Parts Only":1.00,"runs_Runs & Drives":1.00,"runs_Starts won't drive":1.00,"runs_Does not start":1.00,"title_Title":1.00,"title_Registration":1.00,"title_No Documentation":1.00,"cat_Original":1.00,"cat_Not Sure":1.00,"cat_Missing / Replaced":1.00,"mile_Under 50,000":1.00,"mile_50,000 – 100,000":1.00,"mile_100,000 – 150,000":1.00,"mile_150,000 – 200,000":1.00,"mile_200,000+":1.00,"mile_Unknown":1.00};
 var ML = {"cond_Good":"Condition: Good","cond_Fair":"Condition: Fair","cond_Poor":"Condition: Poor","cond_Parts Only":"Condition: Parts Only","runs_Runs & Drives":"Runs & Drives","runs_Starts won't drive":"Starts, won't drive","runs_Does not start":"Doesn't start","title_Title":"Has Title","title_Registration":"Registration Only","title_No Documentation":"No Documentation","cat_Original":"Cat: Original","cat_Not Sure":"Cat: Not Sure","cat_Missing / Replaced":"Cat: Missing/Replaced","mile_Under 50,000":"Under 50k mi","mile_50,000 – 100,000":"50k–100k mi","mile_100,000 – 150,000":"100k–150k mi","mile_150,000 – 200,000":"150k–200k mi","mile_200,000+":"200k+ mi","mile_Unknown":"Unknown mi"};
-var DR = [{make:"Ford",model:"Expedition",yearFrom:"1998",yearTo:"",bid:"600"}];
+var DR = [{make:"Ford",model:"Bronco",yearFrom:"",yearTo:"",bid:"500"},{make:"Ford",model:"Bronco Sport",yearFrom:"",yearTo:"",bid:"500"},{make:"Ford",model:"C-Max",yearFrom:"",yearTo:"",bid:"500"},{make:"Ford",model:"Crown Victoria",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"E-150",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"E-250",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"E-350",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"E-450",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"EcoSport",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"Excursion",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"Expedition",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"Explorer",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"Explorer Sport Tr",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"F-150",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"F-250",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"F-350",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"F-450",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"F-550",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"Maverick",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"Transit",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ford",model:"Transit Connect",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Cadillac",model:"Escalade",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Cadillac",model:"Escalade ESV",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Avalanche",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Blazer",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Camaro",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Colorado",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Corvette",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Express",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Silverado 1500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Silverado 2500HD",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Silverado 3500HD",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Suburban",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"Tahoe",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Chevrolet",model:"TrailBlazer",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Dodge",model:"Challenger",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Dodge",model:"Charger",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Dodge",model:"Ram 1500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Dodge",model:"Ram 2500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Dodge",model:"Ram 3500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Acadia",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Canyon",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Savana",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Sierra 1500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Sierra 2500HD",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Sierra 3500HD",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Suburban",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Yukon",yearFrom:"1998",yearTo:"",bid:"500"},{make:"GMC",model:"Yukon XL",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Hummer",model:"H1",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Hummer",model:"H2",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Hummer",model:"H3",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Hummer",model:"H3T",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Hyundai",model:"Palisade",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Hyundai",model:"Santa Fe",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Hyundai",model:"Santa Fe XL",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Hyundai",model:"Sonata",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Jeep",model:"Commander",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Jeep",model:"Gladiator",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Jeep",model:"Grand Cherokee",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Jeep",model:"Grand Cherokee",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Jeep",model:"Grand Wagoneer",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Jeep",model:"Wagoneer",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Jeep",model:"Wrangler",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Jeep",model:"Wrangler Unlimited",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Kia",model:"Sorento",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Kia",model:"Sportage",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Land Rover",model:"Defender",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"Discovery",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"Discovery Sport",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"LR2",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"LR3",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"LR4",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"Range Rover",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"Range Rover Evoque",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"Range Rover Sport",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Land Rover",model:"Range Rover Velar",yearFrom:"1997",yearTo:"",bid:"500"},{make:"Lincoln",model:"Aviator",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Lincoln",model:"Continental",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Lincoln",model:"LS",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Lincoln",model:"Mark LT",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Lincoln",model:"Navigator",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Lincoln",model:"Town Car",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Mercury",model:"Grand Marquis",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Mercury",model:"Mariner",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Mercury",model:"Mountaineer",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ram",model:"1500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ram",model:"2500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ram",model:"3500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ram",model:"4500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ram",model:"5500",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ram",model:"ProMaster",yearFrom:"1998",yearTo:"",bid:"500"},{make:"Ram",model:"ProMaster City",yearFrom:"1998",yearTo:"",bid:"500"}];
 // Default weekly schedule: Mon-Sat 8am-6pm, Sunday closed
 var DW = [
   {open:false,from:"08:00",to:"18:00"}, // Sun
@@ -705,7 +705,53 @@ function gB(){return ld('bids',Object.assign({},DB));}
 function gM(){return ld('mults',Object.assign({},DM));}
 function gR(){return ld('rules',DR.map(function(r){return Object.assign({},r);}));}
 function gO(){return ld('orders',[]);}
+
 function gW(){return ld('week',DW.map(function(d){return Object.assign({},d);}));}
+
+var PRICING_ENDPOINT = '/pricing';
+var pricingReady = null;
+
+function clone(obj){return JSON.parse(JSON.stringify(obj));}
+function hasLivePricing(data){
+  return !!(data && typeof data==='object' && (data.bids || data.rules || data.mults || data.week));
+}
+function applyPricingToLocal(data){
+  if(!data || typeof data!=='object') return;
+  if(data.bids) sv('bids', Object.assign({}, DB, data.bids));
+  if(data.mults) sv('mults', Object.assign({}, DM, data.mults));
+  if(data.rules) sv('rules', data.rules);
+  if(data.week) sv('week', data.week);
+}
+function getPricingPayload(){
+  return {
+    bids: gB(),
+    mults: gM(),
+    rules: gR(),
+    week: gW()
+  };
+}
+async function loadLivePricing(){
+  try{
+    var res = await fetch(PRICING_ENDPOINT, {cache:'no-store'});
+    if(!res.ok) throw new Error('pricing load failed');
+    var data = await res.json();
+    if(hasLivePricing(data)) applyPricingToLocal(data);
+  }catch(e){}
+}
+async function saveLivePricing(payload){
+  var res = await fetch(PRICING_ENDPOINT,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+  if(!res.ok) throw new Error('pricing save failed');
+  return res.json();
+}
+function ensurePricingLoaded(){
+  if(!pricingReady){ pricingReady = loadLivePricing(); }
+  return pricingReady;
+}
+ensurePricingLoaded();
 
 // ── FORM DROPDOWNS ───────────────────────────────────────────
 (function(){var s=document.getElementById('yrSel');for(var y=new Date().getFullYear();y>=1970;y--){var o=document.createElement('option');o.value=o.textContent=y;s.appendChild(o);}})();
@@ -741,11 +787,12 @@ function calcOffer(fd){
 
 // ── FORM SUBMIT ──────────────────────────────────────────────
 var curSub=null;
-function doSubmit(e){
+async function doSubmit(e){
   e.preventDefault();
   var form=e.target;
   if(!form.runs.value||!form.condition.value||!form.hasTitle.value||!form.catConverter.value){alert('Please answer all required questions.');return;}
   var btn=document.getElementById('subBtn');btn.disabled=true;btn.classList.add('loading');
+  await ensurePricingLoaded();
   var fd=new FormData(form);
   var offer=calcOffer(fd);
   curSub={id:'ord_'+Date.now(),firstName:fd.get('firstName'),lastName:fd.get('lastName'),phone:fd.get('phone'),zip:fd.get('zip'),year:fd.get('year'),make:fd.get('make'),model:fd.get('model'),mileage:fd.get('mileage'),runs:fd.get('runs'),condition:fd.get('condition'),hasTitle:fd.get('hasTitle'),catConverter:fd.get('catConverter'),notes:fd.get('notes'),offer:offer,status:'pending',date:new Date().toLocaleString(),appt:null};
@@ -950,7 +997,7 @@ var unlocked=false,curFilter='all';
 function openAdmin(){document.getElementById('adminOverlay').classList.add('open');if(unlocked)showPanel();else{document.getElementById('loginBox').style.display='block';document.getElementById('adminBox').style.display='none';}}
 function closeAdmin(){document.getElementById('adminOverlay').classList.remove('open');}
 function chkPass(){if(document.getElementById('pwInput').value===PASS){unlocked=true;document.getElementById('loginErr').classList.remove('show');showPanel();}else document.getElementById('loginErr').classList.add('show');}
-function showPanel(){document.getElementById('loginBox').style.display='none';document.getElementById('adminBox').style.display='block';renderOrders();buildWeekGrid();buildApptList();buildRules();buildBids();buildBmMakes();buildMults();}
+async function showPanel(){document.getElementById('loginBox').style.display='none';document.getElementById('adminBox').style.display='block';await ensurePricingLoaded();renderOrders();buildWeekGrid();buildApptList();buildRules();buildBids();buildBmMakes();buildMults();}
 function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});document.getElementById(id).classList.add('on');btn.classList.add('on');if(id==='tOrders')renderOrders();if(id==='tSched'){buildWeekGrid();buildApptList();}if(id==='tMakes'){buildBids();buildBmMakes();}if(id==='tRules')buildRules();if(id==='tMults')buildMults();}
 
 // ── ORDERS ────────────────────────────────────────────────────
@@ -1121,7 +1168,7 @@ function buildMults(){
 function adjMult(btn,delta){var inp=btn.parentElement.querySelector('.bi');var v=Math.round((parseFloat(inp.value||1)+delta)*100)/100;inp.value=Math.max(0.1,Math.min(2,v)).toFixed(2);}
 
 // ── SAVE ALL ──────────────────────────────────────────────────
-function saveAll(){
+async function saveAll(){
   // week schedule
   var week=gW();
   document.querySelectorAll('.wd-from').forEach(function(inp){week[inp.dataset.day].from=inp.value;});
@@ -1135,6 +1182,12 @@ function saveAll(){
   var bids={};document.querySelectorAll('[data-make]').forEach(function(inp){bids[inp.dataset.make]=parseFloat(inp.value)||400;});sv('bids',bids);
   // mults
   var mults={};document.querySelectorAll('[data-mult]').forEach(function(inp){mults[inp.dataset.mult]=parseFloat(inp.value)||1;});sv('mults',mults);
+  var payload={week:week,rules:rules,bids:bids,mults:mults};
+  try{
+    await saveLivePricing(payload);
+  }catch(err){
+    alert('Saved on this device, but live pricing could not be updated right now.');
+  }
   ['sv0','sv1','sv2','sv3'].forEach(function(id){var el=document.getElementById(id);if(el){el.classList.add('show');setTimeout(function(){el.classList.remove('show');},3000);}});
   buildApptList();
 }
