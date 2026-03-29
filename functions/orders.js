@@ -15,7 +15,9 @@ export async function onRequestPost(context) {
       pickup_day,
       pickup_date,
       pickup_time,
-      address
+      address,
+      status,
+      notes
     } = body;
 
     await context.env.DB.prepare(`
@@ -28,14 +30,16 @@ export async function onRequestPost(context) {
         model,
         quoted_price,
         decision,
+        status,
         pickup_type,
         pickup_day,
         pickup_date,
         pickup_time,
         address,
+        notes,
         raw_json
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       customer_name || "",
       phone || "",
@@ -45,18 +49,38 @@ export async function onRequestPost(context) {
       model || "",
       quoted_price || 0,
       decision || "pending",
+      status || "new",
       pickup_type || "",
       pickup_day || "",
       pickup_date || "",
       pickup_time || "",
       address || "",
+      notes || "",
       JSON.stringify(body)
     ).run();
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { "Content-Type": "application/json" }
     });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+}
 
+export async function onRequestGet(context) {
+  try {
+    const { results } = await context.env.DB.prepare(`
+      SELECT *
+      FROM orders
+      ORDER BY id DESC
+    `).all();
+
+    return new Response(JSON.stringify(results || []), {
+      headers: { "Content-Type": "application/json" }
+    });
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
