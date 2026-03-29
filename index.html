@@ -1050,75 +1050,103 @@ function showPanel(){document.getElementById('loginBox').style.display='none';do
 function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});document.getElementById(id).classList.add('on');btn.classList.add('on');if(id==='tOrders')renderOrders();if(id==='tSched'){buildWeekGrid();buildApptList();}if(id==='tMakes'){buildBids();buildBmMakes();}if(id==='tRules')buildRules();if(id==='tMults')buildMults();}
 
 // ── ORDERS ────────────────────────────────────────────────────
-function setFilter(btn){document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');curFilter=btn.dataset.f;renderOrders();}
-function renderOrders(){
-  var orders=gO(),q=(document.getElementById('orderSearch')||{}).value||'';q=q.toLowerCase();
-  var list=document.getElementById('ordersList');if(!list)return;
+var remoteOrders = [];
+
+async function fetchOrdersRemote() {
+  try {
+    var res = await fetch('/orders', { cache: 'no-store' });
+    var data = await res.json();
+    remoteOrders = Array.isArray(data) ? data : [];
+  } catch (e) {
+    remoteOrders = gO();
+  }
+  return remoteOrders;
+}
+
+function setFilter(btn){
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  curFilter=btn.dataset.f;
+  renderOrders();
+}
+
+async function renderOrders(){
+  var orders = await fetchOrdersRemote();
+  var q=(document.getElementById('orderSearch')||{}).value||''; q=q.toLowerCase();
+  var list=document.getElementById('ordersList'); if(!list) return;
+
   var filtered=orders.filter(function(o){
-    if(curFilter!=='all'&&o.status!==curFilter)return false;
-    if(q){var h=(o.firstName+' '+o.lastName+' '+o.phone+' '+o.year+' '+o.make+' '+o.model).toLowerCase();if(h.indexOf(q)<0)return false;}
+    if(curFilter!=='all'&&o.status!==curFilter) return false;
+    if(q){
+      var h=((o.firstName||'')+' '+(o.lastName||'')+' '+(o.phone||'')+' '+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')).toLowerCase();
+      if(h.indexOf(q)<0) return false;
+    }
     return true;
   });
-  if(filtered.length===0){list.innerHTML='<div class="no-orders">No submissions'+(curFilter!=='all'?' in this category':'')+'.</div>';return;}
+
+  if(filtered.length===0){
+    list.innerHTML='<div class="no-orders">No submissions'+(curFilter!=='all'?' in this category':'')+'.</div>';
+    return;
+  }
+
   list.innerHTML='';
-  filtered.forEach(function(o){list.appendChild(mkOCard(o));});
+  filtered.forEach(function(o){ list.appendChild(mkOCard(o)); });
 }
+
 function mkOCard(o){
-  var div=document.createElement('div');div.className='ocard s-'+o.status;
+  var div=document.createElement('div');
+  div.className='ocard s-'+(o.status||'pending');
   var sL={pending:'⏳ Pending',accepted:'✅ Accepted',declined:'❌ Declined',complete:'✔ Complete',cancelled:'🚫 Cancelled'};
   var apptHtml='';
   if(o.appt&&o.appt.address){
-    var txt=o.appt.type==='sameday'?'⚡ Same-day pickup':'📅 '+o.appt.day+', '+o.appt.date+' · 🕐 '+o.appt.time;
+    var txt=o.appt.type==='sameday' ? '⚡ Same-day pickup' : '📅 '+(o.appt.day||'')+', '+(o.appt.date||'')+' · 🕐 '+(o.appt.time||'');
     apptHtml='<div class="ocard-appt">'+txt+'<br>📍 '+o.appt.address+'</div>';
   }
-  div.innerHTML='<div class="ocard-top"><div><div class="ocard-veh">'+o.year+' '+o.make+' '+o.model+'</div><div class="ocard-date">'+o.date+'</div></div><div class="ocard-offer">$'+Number(o.offer).toLocaleString()+'</div></div>'
-    +'<div class="ocard-meta"><span>'+o.firstName+' '+o.lastName+'</span><span>📞 '+o.phone+'</span><span>📍 '+o.zip+'</span><span>'+o.mileage+'</span><span>'+o.runs+'</span><span>'+o.condition+'</span><span>'+o.hasTitle+'</span><span>Cat: '+o.catConverter+'</span>'+(o.notes?'<span>📝 '+o.notes+'</span>':'')+'</div>'
-    +apptHtml+'<span class="ostatus '+o.status+'">'+sL[o.status]+'</span>'
-    +'<div class="ocard-acts">'+(o.status!=='complete'?'<button class="oa oa-done" onclick="updOrder(\''+o.id+'\',\'complete\')">✔ Complete</button>':'')+(o.status!=='cancelled'?'<button class="oa oa-cancel" onclick="updOrder(\''+o.id+'\',\'cancelled\')">🚫 Cancel</button>':'')+'<button class="oa oa-del" onclick="delOrder(\''+o.id+'\')">🗑 Delete</button></div>';
+  var dbId=o._dbId||'';
+  var safeDbId=String(dbId).replace(/"/g,'&quot;');
+  div.innerHTML='    <div class="ocard-top"><div><div class="ocard-veh">'+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')+'</div><div class="ocard-date">'+(o.date||'')+'</div></div><div class="ocard-offer">$'+Number(o.offer||0).toLocaleString()+'</div></div>    <div class="ocard-meta"><span>'+(o.firstName||'')+' '+(o.lastName||'')+'</span><span>📞 '+(o.phone||'')+'</span><span>📍 '+(o.zip||'')+'</span><span>'+(o.mileage||'')+'</span><span>'+(o.runs||'')+'</span><span>'+(o.condition||'')+'</span><span>'+(o.hasTitle||'')+'</span><span>Cat: '+(o.catConverter||'')+'</span>'+(o.notes?'<span>📝 '+o.notes+'</span>':'')+'</div>'    + apptHtml + '    <span class="ostatus '+(o.status||'pending')+'">'+(sL[o.status||'pending']||'⏳ Pending')+'</span>    <div class="ocard-acts">'    + ((o.status!=='complete')?'<button class="oa oa-done" onclick="updOrder('+safeDbId+','complete')">✔ Complete</button>':'')    + ((o.status!=='cancelled')?'<button class="oa oa-cancel" onclick="updOrder('+safeDbId+','cancelled')">🚫 Cancel</button>':'')    + '<button class="oa oa-del" onclick="delOrder('+safeDbId+')">🗑 Delete</button>'    + '</div>';
   return div;
 }
-function updOrder(id,s){var orders=gO().slice();var i=orders.findIndex(function(o){return o.id===id;});if(i>=0){orders[i].status=s;LIVE_ORDERS=orders;sv('orders',orders);renderOrders();buildApptList();upsertOrderRemote(orders[i]).then(function(){return loadOrdersRemote();}).then(function(){renderOrders();buildApptList();}).catch(function(e){console.warn('order status sync fallback',e);});}}
-function delOrder(id){if(!confirm('Delete?'))return;LIVE_ORDERS=gO().filter(function(o){return o.id!==id;});sv('orders',LIVE_ORDERS);renderOrders();buildApptList();}
-function clearOrders(){if(!confirm('Delete ALL orders?'))return;LIVE_ORDERS=[];sv('orders',[]);renderOrders();buildApptList();}
 
-// ── WEEKLY SCHEDULE ───────────────────────────────────────────
-function buildWeekGrid(){
-  var week=gW();
-  var grid=document.getElementById('weekGrid');
-  grid.innerHTML='';
-  DAYS.forEach(function(name,i){
-    var w=week[i];
-    var card=document.createElement('div');card.className='week-day-card';
-    var toggleClass='wdc-toggle'+(w.open?' open':'');
-    card.innerHTML='<div class="wdc-hdr">'
-      +'<span class="wdc-name">'+name+'</span>'
-      +'<label class="'+toggleClass+'" id="wdtog_'+i+'" onclick="toggleDay('+i+')">'
-      +(w.open?'Open':'Closed')
-      +'<span class="toggle-sw"></span></label>'
-      +'</div>'
-      +'<div id="wdtimes_'+i+'" style="'+(w.open?'':'display:none')+'">'
-      +'<div class="wdc-times">'
-      +'<label>From</label><input type="time" class="wd-from" data-day="'+i+'" value="'+(w.from||'08:00')+'">'
-      +'<label>To</label><input type="time" class="wd-to" data-day="'+i+'" value="'+(w.to||'18:00')+'">'
-      +'</div></div>'
-      +(w.open?'':'<div class="wdc-closed-msg">Day is closed</div>');
-    grid.appendChild(card);
+async function updOrder(dbId,s){
+  var row=remoteOrders.find(function(o){ return Number(o._dbId)===Number(dbId); });
+  if(!row) return;
+  row.status=s;
+  await fetch('/orders?id='+encodeURIComponent(dbId),{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(row)
   });
+  await renderOrders();
+  await buildApptList();
 }
-function toggleDay(i){
-  var week=gW();week[i].open=!week[i].open;sv('week',week);buildWeekGrid();}
 
-function buildApptList(){
-  var orders=gO().filter(function(o){return o.appt&&o.appt.address;});
+async function delOrder(dbId){
+  if(!confirm('Delete?')) return;
+  await fetch('/orders?id='+encodeURIComponent(dbId),{ method:'DELETE' });
+  await renderOrders();
+  await buildApptList();
+}
+
+async function clearOrders(){
+  if(!confirm('Delete ALL orders?')) return;
+  await fetch('/orders?all=1',{ method:'DELETE' });
+  await renderOrders();
+  await buildApptList();
+}
+
+async function buildApptList(){
+  var orders=await fetchOrdersRemote();
+  orders=orders.filter(function(o){ return o.appt&&o.appt.address; });
   var list=document.getElementById('apptList');
-  if(!list)return;
-  if(orders.length===0){list.innerHTML='<div class="no-orders">No booked appointments yet.</div>';return;}
+  if(!list) return;
+  if(orders.length===0){ list.innerHTML='<div class="no-orders">No booked appointments yet.</div>'; return; }
   list.innerHTML='';
   orders.forEach(function(o){
-    var div=document.createElement('div');div.className='appt-card';
-    var timeStr=o.appt.type==='sameday'?'⚡ Same-day':'📅 '+o.appt.day+', '+o.appt.date+(o.appt.time?' · '+o.appt.time:'');
+    var div=document.createElement('div'); div.className='appt-card';
+    var timeStr=o.appt.type==='sameday' ? '⚡ Same-day' : '📅 '+(o.appt.day||'')+', '+(o.appt.date||'')+(o.appt.time?' · '+o.appt.time:'');
     div.innerHTML='<div class="appt-card-top">'+timeStr+'</div>'
-      +'<div class="appt-detail"><b>'+o.firstName+' '+o.lastName+'</b> · 📞 '+o.phone+'<br>🚗 '+o.year+' '+o.make+' '+o.model+' · 💵 $'+Number(o.offer).toLocaleString()+'<br>📍 '+o.appt.address+'</div>';
+      +'<div class="appt-detail"><b>'+(o.firstName||'')+' '+(o.lastName||'')+'</b> · 📞 '+(o.phone||'')+'<br>🚗 '+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')+' · 💵 $'+Number(o.offer||0).toLocaleString()+'<br>📍 '+o.appt.address+'</div>';
     list.appendChild(div);
   });
 }
