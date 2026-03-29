@@ -920,27 +920,52 @@ function showV(id){
 
   window.scrollTo({top:0,behavior:'smooth'});
 }
-var remoteOrders=[];
-async function fetchOrdersRemote(){
+function setLiveOrders(orders){sv('orders',orders||[]);} 
+async function ensureOrdersLoaded(){
   try{
     var res=await fetch('/orders',{cache:'no-store'});
     var data=await res.json();
-    if(Array.isArray(data)){remoteOrders=data;sv('orders',data);return data;}
+    if(Array.isArray(data)){
+      var local=gO();
+      data.forEach(function(ro){
+        if(!ro||!ro.id)return;
+        var li=local.findIndex(function(lo){return lo.id===ro.id;});
+        if(li>=0 && !ro._dbId && local[li]._dbId) ro._dbId=local[li]._dbId;
+      });
+      setLiveOrders(data);
+      return data;
+    }
   }catch(e){}
-  var fallback=gO();
-  remoteOrders=fallback;
-  return fallback;
+  return gO();
 }
-function saveOrder(sub){
-  var orders=gO();
+async function persistOrder(sub){
+  var orders=gO().slice();
   var i=orders.findIndex(function(o){return o.id===sub.id;});
-  if(i>=0)orders[i]=sub;else orders.unshift(sub);
-  sv('orders',orders);
-  fetch('/orders',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(sub)
-  }).then(function(){ fetchOrdersRemote().then(function(){ renderOrders(); buildApptList(); }); }).catch(function(){});
+  if(i>=0) orders[i]=Object.assign({},orders[i],sub); else orders.unshift(sub);
+  setLiveOrders(orders);
+  try{
+    var res=await fetch('/orders',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(sub)
+    });
+    var out=await res.json().catch(function(){return {};});
+    if(out && out.id){
+      var refreshed=gO().slice();
+      var j=refreshed.findIndex(function(o){return o.id===sub.id;});
+      if(j>=0){refreshed[j]._dbId=out.id; setLiveOrders(refreshed);} 
+    }
+  }catch(e){}
+}
+function saveOrder(sub){persistOrder(sub);} 
+async function patchOrderRemote(dbId,body){
+  await fetch('/orders?id='+encodeURIComponent(dbId),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+}
+async function deleteOrderRemote(dbId){
+  await fetch('/orders?id='+encodeURIComponent(dbId),{method:'DELETE'});
+}
+async function clearOrdersRemote(){
+  await fetch('/orders?all=1',{method:'DELETE'});
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────
@@ -954,7 +979,7 @@ function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(p){p.cl
 // ── ORDERS ────────────────────────────────────────────────────
 function setFilter(btn){document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');curFilter=btn.dataset.f;renderOrders();}
 async function renderOrders(){
-  var orders=await fetchOrdersRemote(),q=(document.getElementById('orderSearch')||{}).value||'';q=q.toLowerCase();
+  var orders=await ensureOrdersLoaded(),q=(document.getElementById('orderSearch')||{}).value||'';q=q.toLowerCase();
   var list=document.getElementById('ordersList');if(!list)return;
   var filtered=orders.filter(function(o){
     if(curFilter!=='all'&&o.status!==curFilter)return false;
@@ -973,29 +998,36 @@ function mkOCard(o){
     var txt=o.appt.type==='sameday'?'⚡ Same-day pickup':'📅 '+(o.appt.day||'')+', '+(o.appt.date||'')+' · 🕐 '+(o.appt.time||'');
     apptHtml='<div class="ocard-appt">'+txt+'<br>📍 '+o.appt.address+'</div>';
   }
-  var cardId=(o._dbId!=null?o._dbId:o.id);
+  var btnId=(o._dbId!=null?String(o._dbId):String(o.id||'')).replace(/'/g,"\'");
   div.innerHTML='<div class="ocard-top"><div><div class="ocard-veh">'+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')+'</div><div class="ocard-date">'+(o.date||'')+'</div></div><div class="ocard-offer">$'+Number(o.offer||0).toLocaleString()+'</div></div>'
     +'<div class="ocard-meta"><span>'+(o.firstName||'')+' '+(o.lastName||'')+'</span><span>📞 '+(o.phone||'')+'</span><span>📍 '+(o.zip||'')+'</span><span>'+(o.mileage||'')+'</span><span>'+(o.runs||'')+'</span><span>'+(o.condition||'')+'</span><span>'+(o.hasTitle||'')+'</span><span>Cat: '+(o.catConverter||'')+'</span>'+(o.notes?'<span>📝 '+o.notes+'</span>':'')+'</div>'
     +apptHtml+'<span class="ostatus '+(o.status||'pending')+'">'+(sL[o.status||'pending']||'⏳ Pending')+'</span>'
-    +'<div class="ocard-acts">'+((o.status!=='complete')?'<button class="oa oa-done" onclick="updOrder(''+cardId+'','complete')">✔ Complete</button>':'')+((o.status!=='cancelled')?'<button class="oa oa-cancel" onclick="updOrder(''+cardId+'','cancelled')">🚫 Cancel</button>':'')+'<button class="oa oa-del" onclick="delOrder(''+cardId+'')">🗑 Delete</button></div>';
+    +'<div class="ocard-acts">'+((o.status!=='complete')?'<button class="oa oa-done" onclick="updOrder(\''+btnId+'\',\'complete\')">✔ Complete</button>':'')+((o.status!=='cancelled')?'<button class="oa oa-cancel" onclick="updOrder(\''+btnId+'\',\'cancelled\')">🚫 Cancel</button>':'')+'<button class="oa oa-del" onclick="delOrder(\''+btnId+'\')">🗑 Delete</button></div>';
   return div;
 }
 async function updOrder(id,s){
-  var orders=await fetchOrdersRemote();
-  var row=orders.find(function(o){return String(o._dbId||o.id)===String(id);});
-  if(!row)return;
-  row.status=s;
-  sv('orders',orders);
-  if(row._dbId!=null){
-    await fetch('/orders?id='+encodeURIComponent(row._dbId),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(function(){});
-  }else{
-    await fetch('/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(function(){});
+  var orders=gO().slice();
+  var i=orders.findIndex(function(o){return String(o._dbId||o.id)===String(id);});
+  if(i>=0){
+    orders[i].status=s;
+    setLiveOrders(orders);
+    if(orders[i]._dbId!=null) await patchOrderRemote(orders[i]._dbId,orders[i]);
+    else await persistOrder(orders[i]);
+    await renderOrders();
+    await buildApptList();
   }
+}
+async function delOrder(id){
+  if(!confirm('Delete?'))return;
+  var orders=gO().slice();
+  var i=orders.findIndex(function(o){return String(o._dbId||o.id)===String(id);});
+  var row=i>=0?orders[i]:null;
+  if(i>=0){orders.splice(i,1);setLiveOrders(orders);} 
+  if(row && row._dbId!=null) await deleteOrderRemote(row._dbId);
   await renderOrders();
   await buildApptList();
 }
-async function delOrder(id){if(!confirm('Delete?'))return;var orders=await fetchOrdersRemote();var row=orders.find(function(o){return String(o._dbId||o.id)===String(id);});if(row&&row._dbId!=null){await fetch('/orders?id='+encodeURIComponent(row._dbId),{method:'DELETE'}).catch(function(){});}var local=gO().filter(function(o){return String(o._dbId||o.id)!==String(id);});sv('orders',local);await renderOrders();await buildApptList();}
-async function clearOrders(){if(!confirm('Delete ALL orders?'))return;await fetch('/orders?all=1',{method:'DELETE'}).catch(function(){});sv('orders',[]);await renderOrders();await buildApptList();}
+async function clearOrders(){if(!confirm('Delete ALL orders?'))return;setLiveOrders([]);await clearOrdersRemote();await renderOrders();await buildApptList();}
 
 // ── WEEKLY SCHEDULE ───────────────────────────────────────────
 function buildWeekGrid(){
@@ -1025,7 +1057,7 @@ function toggleDay(i){
   var week=gW();week[i].open=!week[i].open;sv('week',week);buildWeekGrid();}
 
 async function buildApptList(){
-  var orders=(await fetchOrdersRemote()).filter(function(o){return o.appt&&o.appt.address;});
+  var orders=(await ensureOrdersLoaded()).filter(function(o){return o.appt&&o.appt.address;});
   var list=document.getElementById('apptList');
   if(!list)return;
   if(orders.length===0){list.innerHTML='<div class="no-orders">No booked appointments yet.</div>';return;}
