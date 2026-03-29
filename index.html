@@ -787,7 +787,7 @@ function calcOffer(fd){
 
 // ── FORM SUBMIT ──────────────────────────────────────────────
 var curSub=null;
-async function doSubmit(e){
+async async function doSubmit(e){
   e.preventDefault();
   var form=e.target;
   if(!form.runs.value||!form.condition.value||!form.hasTitle.value||!form.catConverter.value){alert('Please answer all required questions.');return;}
@@ -980,7 +980,6 @@ function showV(id){
     window.scrollTo({top: Math.max(0, y), behavior:'smooth'});
   });
 }
-function saveOrder(sub){var orders=gO();var i=orders.findIndex(function(o){return o.id===sub.id;});if(i>=0)orders[i]=sub;else orders.unshift(sub);sv('orders',orders);}
 function sendLead(payload){
   return fetch(FS,{
     method:'POST',
@@ -1002,7 +1001,8 @@ function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(p){p.cl
 
 // ── ORDERS ────────────────────────────────────────────────────
 function setFilter(btn){document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');curFilter=btn.dataset.f;renderOrders();}
-function renderOrders(){
+async function renderOrders(){
+  await ensureOrdersLoaded();
   var orders=gO(),q=(document.getElementById('orderSearch')||{}).value||'';q=q.toLowerCase();
   var list=document.getElementById('ordersList');if(!list)return;
   var filtered=orders.filter(function(o){
@@ -1028,9 +1028,9 @@ function mkOCard(o){
     +'<div class="ocard-acts">'+(o.status!=='complete'?'<button class="oa oa-done" onclick="updOrder(\''+o.id+'\',\'complete\')">✔ Complete</button>':'')+(o.status!=='cancelled'?'<button class="oa oa-cancel" onclick="updOrder(\''+o.id+'\',\'cancelled\')">🚫 Cancel</button>':'')+'<button class="oa oa-del" onclick="delOrder(\''+o.id+'\')">🗑 Delete</button></div>';
   return div;
 }
-function updOrder(id,s){var orders=gO();var i=orders.findIndex(function(o){return o.id===id;});if(i>=0){orders[i].status=s;sv('orders',orders);renderOrders();}}
-function delOrder(id){if(!confirm('Delete?'))return;sv('orders',gO().filter(function(o){return o.id!==id;}));renderOrders();}
-function clearOrders(){if(!confirm('Delete ALL orders?'))return;sv('orders',[]);renderOrders();}
+function updOrder(id,s){var orders=gO().slice();var i=orders.findIndex(function(o){return o.id===id;});if(i>=0){orders[i].status=s;setLiveOrders(orders);persistOrder(orders[i]).catch(function(){});renderOrders();buildApptList();}}
+function delOrder(id){if(!confirm('Delete?'))return;setLiveOrders(gO().filter(function(o){return o.id!==id;}));deleteOrderRemote(id).catch(function(){});renderOrders();buildApptList();}
+function clearOrders(){if(!confirm('Delete ALL orders?'))return;setLiveOrders([]);clearOrdersRemote().catch(function(){});renderOrders();buildApptList();}
 
 // ── WEEKLY SCHEDULE ───────────────────────────────────────────
 function buildWeekGrid(){
@@ -1168,7 +1168,7 @@ function buildMults(){
 function adjMult(btn,delta){var inp=btn.parentElement.querySelector('.bi');var v=Math.round((parseFloat(inp.value||1)+delta)*100)/100;inp.value=Math.max(0.1,Math.min(2,v)).toFixed(2);}
 
 // ── SAVE ALL ──────────────────────────────────────────────────
-async function saveAll(){
+async async function saveAll(){
   // week schedule
   var week=gW();
   document.querySelectorAll('.wd-from').forEach(function(inp){week[inp.dataset.day].from=inp.value;});
