@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Contractor Link Platform Prototype</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{--bg:#0b0f14;--panel:#121923;--panel2:#171f2b;--line:#273447;--text:#edf3fb;--muted:#9eb0c8;--blue:#7ab8ff;--blue2:#b8d9ff;--good:#6fdc95;--warn:#ffd06d;--bad:#ff9191;--radius:18px;--shadow:0 18px 40px rgba(0,0,0,.35)}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top right, rgba(122,184,255,.08), transparent 28%),radial-gradient(circle at top left, rgba(184,217,255,.05), transparent 24%),var(--bg);color:var(--text)}
+.shell{max-width:1280px;margin:0 auto;padding:16px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08);background:rgba(18,25,35,.96);border-radius:22px;box-shadow:var(--shadow);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)}
+.brand{font-weight:800;letter-spacing:-.03em}.brand small{display:block;font-size:12px;color:var(--muted);font-weight:600}.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab-btn,button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:14px;padding:12px 14px;font-size:15px;cursor:pointer}
+.tab-btn.active,.primary{background:linear-gradient(180deg,#9acbff,#71b4ff);color:#07111a;border:none;font-weight:700}.ghost{background:transparent}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}@media(max-width:980px){.grid{grid-template-columns:1fr}}
+.panel{background:rgba(18,25,35,.96);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+.hero{padding:28px}.eyebrow{font-size:12px;color:var(--blue2);text-transform:uppercase;letter-spacing:.16em;margin-bottom:10px}
+h1,h2,h3{margin:0 0 10px;letter-spacing:-.03em}h1{font-size:42px;line-height:1.0}h2{font-size:24px}h3{font-size:18px}
+.sub{color:var(--muted);font-size:15px;line-height:1.5}.cta-row,.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}@media(max-width:760px){.row,.row3{grid-template-columns:1fr}}
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+input,select,textarea{width:100%;border-radius:14px;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:12px 14px;font-size:16px;outline:none}
+textarea{min-height:96px;resize:vertical}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(122,184,255,.16);border-color:#7ab8ff}
+.section{font-size:12px;color:var(--blue2);text-transform:uppercase;letter-spacing:.14em;margin:18px 0 10px}
+.service-list,.job-list{display:grid;gap:10px}.service-item,.job-item{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);border-radius:16px;padding:12px}
+.mini{font-size:12px;color:var(--muted)}.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:760px){.metric-grid{grid-template-columns:1fr 1fr}}
+.metric{padding:14px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}.metric .k{font-size:12px;color:var(--muted);margin-bottom:6px}.metric .v{font-size:28px;font-weight:800}
+.hidden{display:none!important}.two-col{display:grid;grid-template-columns:280px 1fr;gap:14px}@media(max-width:980px){.two-col{grid-template-columns:1fr}}
+.sidebar a{display:block;padding:12px 14px;border-radius:14px;border:1px solid transparent;text-decoration:none;margin-bottom:8px;color:var(--muted)}
+.sidebar a.active{color:var(--text);background:rgba(122,184,255,.12);border-color:rgba(122,184,255,.18)}
+.quote-box{text-align:center;padding:22px;border-radius:22px;background:linear-gradient(180deg,rgba(122,184,255,.12),rgba(122,184,255,.04));border:1px solid rgba(122,184,255,.22)}
+.quote-price{font-size:42px;font-weight:900;letter-spacing:-.05em}.step{display:none}.step.active{display:block}
+.chip{display:inline-block;padding:7px 10px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05)}
+.divider{height:1px;background:rgba(255,255,255,.08);margin:14px 0}.center{text-align:center}
+.doc{background:#fff;color:#111;border-radius:14px;padding:18px}.signature{height:150px;background:#fff;border:2px dashed #cbd5e1;border-radius:14px;touch-action:none}
+.footer-note{font-size:12px;color:var(--muted);text-align:center;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="topbar">
+<div class="brand">LinkFlow for Contractors<small>offline prototype you can test locally</small></div>
+<div class="tabs">
+<button class="tab-btn active" data-tab="landing">Landing</button>
+<button class="tab-btn" data-tab="builder">Builder</button>
+<button class="tab-btn" data-tab="customer">Customer Link</button>
+<button class="tab-btn" data-tab="dashboard">Dashboard</button>
+</div></div>
+
+<section id="landing" class="app-tab">
+<div class="grid">
+<div class="panel hero">
+<div class="eyebrow">Contractor quote + booking app</div>
+<h1>Send one link.<br>Get the job booked.</h1>
+<div class="sub">Built for pressure washing, detailing, lawn service, handyman, junk removal, and other local service businesses. Customers answer a few questions, get an instant quote or request an estimate, choose a time, sign the agreement, and the job lands in the contractor dashboard.</div>
+<div class="cta-row">
+<button class="primary" onclick="switchTab('builder')">Build Your Link</button>
+<button class="ghost" onclick="switchTab('customer')">See Customer Flow</button>
+</div></div>
+<div class="panel">
+<div class="section">How it works</div>
+<div class="service-list">
+<div class="service-item"><strong>1. Contractor sets services</strong><div class="mini">Add services, questions, pricing rules, or use estimate-only mode.</div></div>
+<div class="service-item"><strong>2. Send a branded link</strong><div class="mini">Text or DM one link instead of going back and forth.</div></div>
+<div class="service-item"><strong>3. Customer accepts and schedules</strong><div class="mini">Instant quote or in-person estimate request.</div></div>
+<div class="service-item"><strong>4. Agreement and saved job</strong><div class="mini">Generate a clean confirmation and store the job in the dashboard.</div></div>
+</div></div></div></section>
+
+<section id="builder" class="app-tab hidden">
+<div class="two-col">
+<div class="panel sidebar">
+<a href="#" class="active">Business Setup</a>
+<a href="#">Services</a>
+<a href="#">Pricing</a>
+<a href="#">Scheduling</a>
+<a href="#">Agreement</a>
+</div>
+<div class="panel">
+<h2>Contractor Builder</h2>
+<div class="sub">Change the settings, add services, then test your customer link in the next tab.</div>
+
+<div class="section">Business</div>
+<div class="row">
+<div><label>Business name</label><input id="bizName" value="Sunshine Pressure Washing"></div>
+<div><label>Service type</label><select id="bizType"><option>Pressure Washing</option><option>Car Detailing</option><option>Lawn Service</option><option>Handyman</option><option>Junk Removal</option><option>Other</option></select></div>
+<div><label>Phone</label><input id="bizPhone" value="(954) 555-1022"></div>
+<div><label>Custom link slug</label><input id="bizSlug" value="sunshinepressurewash"></div>
+</div>
+
+<div class="section">Modes</div>
+<div class="row">
+<div><label>Default customer mode</label><select id="quoteMode"><option value="both">Quote + Estimate</option><option value="quote">Instant Quote Only</option><option value="estimate">Estimate Booking Only</option></select></div>
+<div><label>Agreement title</label><input id="agreementTitle" value="Service Agreement"></div>
+</div>
+
+<div class="section">Add a Service</div>
+<div class="row3">
+<div><label>Service name</label><input id="svcName" placeholder="Driveway Cleaning"></div>
+<div><label>Base price ($)</label><input id="svcBase" type="number" value="120"></div>
+<div><label>Mode</label><select id="svcMode"><option value="quote">Instant Quote</option><option value="estimate">Estimate Only</option></select></div>
+</div>
+<div class="row3" style="margin-top:12px">
+<div><label>Question 1 label</label><input id="q1Label" value="How big is the job?"></div>
+<div><label>Question 1 options</label><input id="q1Opts" value="Small|0,Medium|30,Large|60"></div>
+<div class="mini" style="align-self:end">Format: Label|price,Label|price</div>
+</div>
+<div class="row3" style="margin-top:12px">
+<div><label>Question 2 label</label><input id="q2Label" value="Heavy stains / extra work?"></div>
+<div><label>Question 2 options</label><input id="q2Opts" value="No|0,Yes|35"></div>
+<div class="btn-row" style="align-self:end"><button class="primary" onclick="addService()">Add Service</button></div>
+</div>
+
+<div class="section">Services</div>
+<div id="serviceList" class="service-list"></div>
+
+<div class="btn-row">
+<button class="primary" onclick="saveBuilder()">Save Prototype Data</button>
+<button onclick="loadDemo()">Load Demo Data</button>
+<button class="ghost" onclick="switchTab('customer')">Test Customer Link</button>
+</div>
+</div></div></section>
+
+<section id="customer" class="app-tab hidden">
+<div class="grid">
+<div class="panel">
+<h2>Customer Link Preview</h2>
+<div class="sub">This is the shareable link flow the customer would see.</div>
+<div class="divider"></div>
+
+<div id="customerStep1" class="step active">
+<div class="center">
+<div class="eyebrow">Branded link page</div>
+<h2 id="customerBizName">Sunshine Pressure Washing</h2>
+<div class="sub" id="customerBizSub">Fast online quote and booking</div>
+<div class="btn-row" style="justify-content:center">
+<button id="startQuoteBtn" class="primary" onclick="startCustomerFlow('quote')">Get Instant Quote</button>
+<button id="startEstimateBtn" onclick="startCustomerFlow('estimate')">Request Estimate</button>
+</div>
+<div class="footer-note" id="shareLinkLabel"></div>
+</div></div>
+
+<div id="customerStep2" class="step">
+<div class="section">Step 1</div>
+<div class="row">
+<div><label>Your name</label><input id="custName" placeholder="John Smith"></div>
+<div><label>Phone</label><input id="custPhone" placeholder="(555) 555-5555"></div>
+<div><label>Address</label><input id="custAddress" placeholder="123 Main St"></div>
+<div><label>Select service</label><select id="custService" onchange="renderCustomerQuestions()"></select></div>
+</div>
+<div id="dynamicQuestions" class="row" style="margin-top:12px"></div>
+<div class="btn-row"><button class="primary" onclick="continueCustomerResult()">Continue</button><button onclick="resetCustomerFlow()">Back</button></div>
+</div>
+
+<div id="customerStep3" class="step">
+<div class="quote-box">
+<div class="eyebrow">Result</div>
+<div id="resultTitle">Your quote</div>
+<div class="quote-price" id="quotePrice">$0</div>
+<div class="sub" id="quoteBreakdown"></div>
+</div>
+<div class="btn-row" style="justify-content:center"><button class="primary" onclick="continueSchedule()">Accept & Schedule</button><button onclick="resetCustomerFlow()">Start Over</button></div>
+</div>
+
+<div id="customerStep4" class="step">
+<div class="section">Schedule</div>
+<div class="row">
+<div><label>Date</label><select id="scheduleDate"><option>Tomorrow</option><option>This Friday</option><option>This Saturday</option></select></div>
+<div><label>Time window</label><select id="scheduleTime"><option>8–10 AM</option><option>10–12 PM</option><option>1–3 PM</option><option>3–5 PM</option></select></div>
+</div>
+<div class="btn-row"><button class="primary" onclick="continueAgreement()">Continue</button><button onclick="goStep('customerStep3')">Back</button></div>
+</div>
+
+<div id="customerStep5" class="step">
+<div class="doc">
+<h3 id="agreementHeading">Service Agreement</h3>
+<p><strong>Business:</strong> <span id="docBizName"></span></p>
+<p><strong>Customer:</strong> <span id="docCustName"></span></p>
+<p><strong>Service:</strong> <span id="docService"></span></p>
+<p><strong>Price / Type:</strong> <span id="docPrice"></span></p>
+<p><strong>Address:</strong> <span id="docAddress"></span></p>
+<p><strong>Scheduled:</strong> <span id="docSchedule"></span></p>
+<p>By signing below, the customer approves the requested service or estimate visit and acknowledges the contractor's scheduling and service terms.</p>
+<div class="section" style="color:#475569">Customer signature</div>
+<canvas id="customerSig" class="signature" width="900" height="300"></canvas>
+<div class="btn-row"><button onclick="clearSig('customerSig')">Clear Signature</button></div>
+</div>
+<div class="btn-row"><button class="primary" onclick="finishBooking()">Confirm Booking</button><button onclick="goStep('customerStep4')">Back</button></div>
+</div>
+
+<div id="customerStep6" class="step">
+<div class="center">
+<div class="eyebrow">Done</div>
+<h2>You’re booked</h2>
+<div class="sub" id="confirmText"></div>
+<div class="btn-row" style="justify-content:center"><button class="primary" onclick="switchTab('dashboard')">Open Contractor Dashboard</button><button onclick="resetCustomerFlow()">New Test Booking</button></div>
+</div></div>
+</div>
+
+<div class="panel">
+<h2>Live Preview Notes</h2>
+<div class="service-list">
+<div class="service-item"><strong>Contractor link</strong><div class="mini" id="previewLink">yourapp.com/sunshinepressurewash</div></div>
+<div class="service-item"><strong>Current mode</strong><div class="mini" id="previewMode">Quote + Estimate</div></div>
+<div class="service-item"><strong>Saved jobs</strong><div class="mini"><span id="jobsCount">0</span> jobs saved to local storage in this prototype</div></div>
+<div class="service-item"><strong>What to test</strong><div class="mini">Try quote mode, estimate mode, scheduling, signature, and completed jobs in the dashboard.</div></div>
+</div></div></div></section>
+
+<section id="dashboard" class="app-tab hidden">
+<div class="panel">
+<h2>Contractor Dashboard</h2>
+<div class="sub">Prototype job dashboard for the contractor side.</div>
+<div class="metric-grid" style="margin-top:14px">
+<div class="metric"><div class="k">New Leads</div><div class="v" id="mNew">0</div></div>
+<div class="metric"><div class="k">Scheduled</div><div class="v" id="mScheduled">0</div></div>
+<div class="metric"><div class="k">Completed</div><div class="v" id="mCompleted">0</div></div>
+<div class="metric"><div class="k">Quoted Jobs</div><div class="v" id="mQuoted">0</div></div>
+</div>
+<div class="section">Jobs</div>
+<div id="jobList" class="job-list"></div>
+<div class="btn-row"><button onclick="clearJobs()">Clear All Test Jobs</button><button class="ghost" onclick="switchTab('customer')">Go Back to Customer Flow</button></div>
+</div></section>
+</div>
+
+<script>
+const DEMO={business:{name:"Sunshine Pressure Washing",type:"Pressure Washing",phone:"(954) 555-1022",slug:"sunshinepressurewash",mode:"both",agreementTitle:"Service Agreement"},services:[{id:"svc1",name:"Driveway Cleaning",base:120,mode:"quote",questions:[{label:"How big is the job?",options:[["Small",0],["Medium",30],["Large",60]]},{label:"Heavy stains / extra work?",options:[["No",0],["Yes",35]]}]},{id:"svc2",name:"House Wash Estimate",base:0,mode:"estimate",questions:[{label:"House size",options:[["Small",0],["Medium",0],["Large",0]]},{label:"Two-story?",options:[["No",0],["Yes",0]]}]}]};
+let state={business:{...DEMO.business},services:JSON.parse(JSON.stringify(DEMO.services)),jobs:[],currentFlowMode:"quote",currentQuote:0,currentServiceId:null};
+function qs(id){return document.getElementById(id)} function money(n){return "$"+Math.round(n||0).toLocaleString()}
+function saveState(){localStorage.setItem("contractorPrototypeStateV1",JSON.stringify({business:state.business,services:state.services,jobs:state.jobs}))}
+function loadState(){try{const raw=localStorage.getItem("contractorPrototypeStateV1");if(raw){const p=JSON.parse(raw);if(p.business)state.business=p.business;if(p.services)state.services=p.services;if(p.jobs)state.jobs=p.jobs}}catch(e){}}
+function switchTab(name){document.querySelectorAll(".app-tab").forEach(el=>el.classList.add("hidden"));document.querySelectorAll(".tab-btn").forEach(btn=>btn.classList.remove("active"));qs(name).classList.remove("hidden");document.querySelector('.tab-btn[data-tab="'+name+'"]').classList.add("active");refreshAll()}
+document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+function parseQuestion(label,raw){return{label:label||"Question",options:(raw||"").split(",").map(part=>{const b=part.split("|");return[(b[0]||"").trim(),parseFloat(b[1])||0]}).filter(x=>x[0])}}
+function addService(){const svc={id:"svc"+Date.now(),name:qs("svcName").value.trim()||"New Service",base:parseFloat(qs("svcBase").value)||0,mode:qs("svcMode").value,questions:[parseQuestion(qs("q1Label").value,qs("q1Opts").value),parseQuestion(qs("q2Label").value,qs("q2Opts").value)]};state.services.push(svc);saveBuilder();qs("svcName").value=""}
+function saveBuilder(){state.business={name:qs("bizName").value.trim()||"My Business",type:qs("bizType").value,phone:qs("bizPhone").value.trim(),slug:(qs("bizSlug").value.trim()||"mybusiness").replace(/\s+/g,"").toLowerCase(),mode:qs("quoteMode").value,agreementTitle:qs("agreementTitle").value.trim()||"Service Agreement"};saveState();refreshAll();alert("Prototype data saved.")}
+function loadDemo(){state.business={...DEMO.business};state.services=JSON.parse(JSON.stringify(DEMO.services));saveState();populateBuilder();refreshAll()}
+function populateBuilder(){qs("bizName").value=state.business.name;qs("bizType").value=state.business.type;qs("bizPhone").value=state.business.phone;qs("bizSlug").value=state.business.slug;qs("quoteMode").value=state.business.mode;qs("agreementTitle").value=state.business.agreementTitle;renderServices()}
+function renderServices(){const box=qs("serviceList");if(!state.services.length){box.innerHTML='<div class="mini">No services yet.</div>';return}box.innerHTML=state.services.map(s=>'<div class="service-item"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><strong>'+escapeHtml(s.name)+'</strong><div class="mini">'+(s.mode==="quote"?"Instant Quote":"Estimate Only")+' · Base '+money(s.base)+'</div><div class="mini">'+escapeHtml(s.questions.map(q=>q.label).join(" • "))+'</div></div><button onclick="removeService(\''+s.id+'\')">Delete</button></div></div>').join("")}
+function removeService(id){state.services=state.services.filter(s=>s.id!==id);saveState();refreshAll()}
+function refreshCustomerLink(){qs("customerBizName").textContent=state.business.name;qs("customerBizSub").textContent='Fast online quote and booking · '+state.business.phone;qs("shareLinkLabel").textContent='Example share link: yourapp.com/'+state.business.slug;qs("previewLink").textContent='yourapp.com/'+state.business.slug;qs("previewMode").textContent=state.business.mode==="both"?"Quote + Estimate":state.business.mode==="quote"?"Instant Quote Only":"Estimate Booking Only";const select=qs("custService");select.innerHTML=state.services.map(s=>'<option value="'+s.id+'">'+escapeHtml(s.name)+'</option>').join("");if(state.services[0])state.currentServiceId=state.services[0].id;renderCustomerQuestions();qs("startQuoteBtn").classList.toggle("hidden",state.business.mode==="estimate");qs("startEstimateBtn").classList.toggle("hidden",state.business.mode==="quote")}
+function renderCustomerQuestions(){const svcId=qs("custService").value||state.currentServiceId;state.currentServiceId=svcId;const svc=state.services.find(x=>x.id===svcId);const box=qs("dynamicQuestions");if(!svc){box.innerHTML="";return}box.innerHTML=svc.questions.map((q,idx)=>'<div><label>'+escapeHtml(q.label)+'</label><select id="cq_'+idx+'">'+q.options.map((opt,oi)=>'<option value="'+oi+'">'+escapeHtml(opt[0])+'</option>').join("")+'</select></div>').join("")}
+function startCustomerFlow(mode){state.currentFlowMode=mode;goStep("customerStep2")} function goStep(id){document.querySelectorAll("#customer .step").forEach(s=>s.classList.remove("active"));qs(id).classList.add("active")}
+function resetCustomerFlow(){qs("custName").value="";qs("custPhone").value="";qs("custAddress").value="";if(state.services[0])qs("custService").value=state.services[0].id;renderCustomerQuestions();clearSig("customerSig");goStep("customerStep1")}
+function continueCustomerResult(){const svc=state.services.find(x=>x.id===qs("custService").value);if(!svc)return;let total=svc.base;const parts=[svc.name+": "+money(svc.base)];svc.questions.forEach((q,idx)=>{const selected=parseInt(qs("cq_"+idx).value,10)||0;const opt=q.options[selected];total+=opt[1];parts.push(q.label+": "+opt[0]+" ("+(opt[1]>=0?"+":"")+money(opt[1])+")")});const resultMode=state.currentFlowMode==="estimate"||svc.mode==="estimate"?"estimate":"quote";state.currentQuote=total;if(resultMode==="estimate"){qs("resultTitle").textContent="Request an in-person estimate";qs("quotePrice").textContent="Estimate Visit";qs("quoteBreakdown").textContent="Customer requested an in-person estimate based on the form answers."}else{qs("resultTitle").textContent="Your quote";qs("quotePrice").textContent=money(total);qs("quoteBreakdown").textContent=parts.join(" · ")}goStep("customerStep3")}
+function continueSchedule(){goStep("customerStep4")}
+function continueAgreement(){const svc=state.services.find(x=>x.id===qs("custService").value);qs("agreementHeading").textContent=state.business.agreementTitle;qs("docBizName").textContent=state.business.name;qs("docCustName").textContent=qs("custName").value||"Customer";qs("docService").textContent=svc?svc.name:"";qs("docPrice").textContent=(state.currentFlowMode==="estimate"||(svc&&svc.mode==="estimate"))?"Estimate Request":money(state.currentQuote);qs("docAddress").textContent=qs("custAddress").value||"";qs("docSchedule").textContent=qs("scheduleDate").value+' · '+qs("scheduleTime").value;goStep("customerStep5")}
+function collectAnswerText(svc){if(!svc)return[];return svc.questions.map((q,idx)=>{const selected=parseInt(qs("cq_"+idx).value,10)||0;return{question:q.label,answer:q.options[selected][0],price:q.options[selected][1]}})}
+function finishBooking(){const svc=state.services.find(x=>x.id===qs("custService").value);const isEstimate=state.currentFlowMode==="estimate"||(svc&&svc.mode==="estimate");const job={id:"job_"+Date.now(),customer:qs("custName").value||"Customer",phone:qs("custPhone").value||"",address:qs("custAddress").value||"",serviceId:svc?svc.id:"",serviceName:svc?svc.name:"",mode:isEstimate?"estimate":"quote",price:isEstimate?null:state.currentQuote,scheduleDate:qs("scheduleDate").value,scheduleTime:qs("scheduleTime").value,status:"scheduled",createdAt:new Date().toISOString(),answers:collectAnswerText(svc),signed:hasSignature("customerSig")};state.jobs.unshift(job);saveState();qs("confirmText").textContent=job.customer+' · '+job.serviceName+' · '+(isEstimate?"Estimate Visit":money(job.price))+' · '+job.scheduleDate+' '+job.scheduleTime;refreshDashboard();goStep("customerStep6")}
+function refreshDashboard(){qs("jobsCount").textContent=state.jobs.length;qs("mNew").textContent=state.jobs.length;qs("mScheduled").textContent=state.jobs.filter(j=>j.status==="scheduled").length;qs("mCompleted").textContent=state.jobs.filter(j=>j.status==="completed").length;qs("mQuoted").textContent=state.jobs.filter(j=>j.mode==="quote").length;const box=qs("jobList");if(!state.jobs.length){box.innerHTML='<div class="mini">No jobs yet. Go through the customer flow to create test jobs.</div>';return}box.innerHTML=state.jobs.map(j=>'<div class="job-item"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><strong>'+escapeHtml(j.customer)+'</strong> <span class="chip">'+(j.mode==="estimate"?"Estimate":"Quote")+'</span><div class="mini">'+escapeHtml(j.serviceName)+' · '+(j.mode==="estimate"?"Estimate Visit":money(j.price))+' · '+escapeHtml(j.scheduleDate)+' '+escapeHtml(j.scheduleTime)+'</div><div class="mini">'+escapeHtml(j.address)+' · '+escapeHtml(j.phone)+'</div><div class="mini">'+j.answers.map(a=>a.question+': '+a.answer).join(" • ")+'</div></div><div class="btn-row" style="margin-top:0"><button onclick="markComplete(\''+j.id+'\')">Mark Complete</button><button onclick="openJobDoc(\''+j.id+'\')">Open Job Doc</button></div></div></div>').join("")}
+function markComplete(id){const job=state.jobs.find(j=>j.id===id);if(job)job.status="completed";saveState();refreshDashboard()}
+function openJobDoc(id){const job=state.jobs.find(j=>j.id===id);if(!job)return;const w=window.open("","_blank");if(!w){alert("Popup blocked.");return}w.document.write('<html><head><title>Job Summary</title><style>body{font-family:Arial,sans-serif;padding:24px;color:#111}h1{margin:0 0 8px}table{width:100%;border-collapse:collapse;margin-top:16px}td,th{border:1px solid #ddd;padding:10px}th{text-align:left;background:#f7f7f7;width:180px}</style></head><body><h1>'+escapeHtml(state.business.name)+' - Job Summary</h1><div>'+escapeHtml(job.customer)+' · '+escapeHtml(job.phone)+'</div><table><tr><th>Service</th><td>'+escapeHtml(job.serviceName)+'</td></tr><tr><th>Type</th><td>'+(job.mode==="estimate"?"Estimate Visit":"Instant Quote")+'</td></tr><tr><th>Price</th><td>'+(job.mode==="estimate"?"Estimate Visit":money(job.price))+'</td></tr><tr><th>Address</th><td>'+escapeHtml(job.address)+'</td></tr><tr><th>Schedule</th><td>'+escapeHtml(job.scheduleDate)+' · '+escapeHtml(job.scheduleTime)+'</td></tr><tr><th>Status</th><td>'+escapeHtml(job.status)+'</td></tr><tr><th>Signed</th><td>'+(job.signed?"Yes":"No")+'</td></tr></table></body></html>');w.document.close()}
+function clearJobs(){if(!confirm("Clear all test jobs?"))return;state.jobs=[];saveState();refreshDashboard()}
+function refreshAll(){populateBuilder();renderServices();refreshCustomerLink();refreshDashboard()}
+function escapeHtml(str){return String(str).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+function initSignature(id){const canvas=qs(id),ctx=canvas.getContext("2d");ctx.lineWidth=3.5;ctx.lineCap="round";ctx.lineJoin="round";let drawing=false;function pos(e){const r=canvas.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(canvas.width/r.width),y:(p.clientY-r.top)*(canvas.height/r.height)}}function start(e){drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault()}function move(e){if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();canvas.dataset.signed="1";e.preventDefault()}function end(){drawing=false}
+canvas.addEventListener("pointerdown",start);canvas.addEventListener("pointermove",move);window.addEventListener("pointerup",end);canvas.addEventListener("touchstart",start,{passive:false});canvas.addEventListener("touchmove",move,{passive:false});window.addEventListener("touchend",end);ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height)}
+function clearSig(id){const c=qs(id),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#ffffff";ctx.fillRect(0,0,c.width,c.height);c.dataset.signed=""}
+function hasSignature(id){return qs(id).dataset.signed==="1"}
+loadState();populateBuilder();refreshAll();initSignature("customerSig");
+</script>
+</body>
+</html>
