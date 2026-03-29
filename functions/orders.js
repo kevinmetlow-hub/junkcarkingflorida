@@ -126,4 +126,3 @@ export async function onRequestDelete(context) {
       headers: { "Content-Type": "application/json" }
     });
   }
-}
