@@ -12,20 +12,8 @@
 <meta property="og:title" content="Junk Car King Florida – Instant Cash Offer"/>
 <meta property="og:description" content="Sell your junk car in South Florida for top dollar. Instant quote, free towing, cash on pickup."/>
 <meta property="og:type" content="website"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Junk Car King Florida","telephone":"+19544837592","serviceType":"Junk Car Buying","areaServed":[{"@type":"City","name":"Fort Lauderdale"},{"@type":"City","name":"Pompano Beach"},{"@type":"City","name":"Miami"},{"@type":"City","name":"Hollywood"},{"@type":"City","name":"Hialeah"},{"@type":"City","name":"Boca Raton"}]}
-bootRemote().then(function(){
-  try{ fillModels(); }catch(e){}
-  if(unlocked){showPanel();}
-}).catch(function(e){console.warn('boot fallback',e);});
-
-</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How fast can I sell my junk car in South Florida?","acceptedAnswer":{"@type":"Answer","text":"Fill out our form and get an instant cash offer in under 60 seconds. Same-day or next-day pickup available."}},{"@type":"Question","name":"Do you buy junk cars without a title?","acceptedAnswer":{"@type":"Answer","text":"Yes. We buy cars with title, registration only, or no documentation at all."}},{"@type":"Question","name":"Is towing really free?","acceptedAnswer":{"@type":"Answer","text":"100% free towing included with every purchase, anywhere in Broward or Miami-Dade County."}},{"@type":"Question","name":"Do you buy cars that don't run?","acceptedAnswer":{"@type":"Answer","text":"Absolutely. We buy cars in any condition — running, not running, flood damaged, or wrecked."}}]}
-bootRemote().then(function(){
-  try{ fillModels(); }catch(e){}
-  if(unlocked){showPanel();}
-}).catch(function(e){console.warn('boot fallback',e);});
-
-</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Junk Car King Florida","telephone":"+19544837592","serviceType":"Junk Car Buying","areaServed":[{"@type":"City","name":"Fort Lauderdale"},{"@type":"City","name":"Pompano Beach"},{"@type":"City","name":"Miami"},{"@type":"City","name":"Hollywood"},{"@type":"City","name":"Hialeah"},{"@type":"City","name":"Boca Raton"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How fast can I sell my junk car in South Florida?","acceptedAnswer":{"@type":"Answer","text":"Fill out our form and get an instant cash offer in under 60 seconds. Same-day or next-day pickup available."}},{"@type":"Question","name":"Do you buy junk cars without a title?","acceptedAnswer":{"@type":"Answer","text":"Yes. We buy cars with title, registration only, or no documentation at all."}},{"@type":"Question","name":"Is towing really free?","acceptedAnswer":{"@type":"Answer","text":"100% free towing included with every purchase, anywhere in Broward or Miami-Dade County."}},{"@type":"Question","name":"Do you buy cars that don't run?","acceptedAnswer":{"@type":"Answer","text":"Absolutely. We buy cars in any condition — running, not running, flood damaged, or wrecked."}}]}</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@300;400;500;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -647,8 +635,7 @@ body{font-family:'Barlow','Helvetica Neue',Arial,sans-serif;background:#07090f;c
 
 <script>
 var PASS = "jckflorida2025";
-var FS   = "https://api.web3forms.com/submit";
-var W3KEY = "ccec1ad0-d6d0-4867-a9ec-34e37ba7f278";
+var FS   = "https://formspree.io/f/xwvwknnw";
 var VER  = "jck4_";
 var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
@@ -710,99 +697,15 @@ var DW = [
   {open:true,from:"08:00",to:"14:00"},  // Sat
 ];
 
-var LIVE_PRICING = null;
-var LIVE_ORDERS = [];
-var PRICING_URL = '/pricing';
-var ORDERS_URL = '/orders';
-
 // ── STORAGE ──────────────────────────────────────────────────
 function sv(k,v){try{localStorage.setItem(VER+k,JSON.stringify(v));}catch(e){}}
 function ld(k,d){try{var s=localStorage.getItem(VER+k);return s!==null?JSON.parse(s):d;}catch(e){return d;}}
-function gB(){return LIVE_PRICING&&LIVE_PRICING.bids?LIVE_PRICING.bids:ld('bids',Object.assign({},DB));}
-function gM(){return LIVE_PRICING&&LIVE_PRICING.mults?LIVE_PRICING.mults:ld('mults',Object.assign({},DM));}
-function gR(){return LIVE_PRICING&&LIVE_PRICING.rules?LIVE_PRICING.rules:ld('rules',DR.map(function(r){return Object.assign({},r);}));}
-function gO(){return Array.isArray(LIVE_ORDERS)?LIVE_ORDERS:ld('orders',[]);}
-function gW(){return LIVE_PRICING&&LIVE_PRICING.week?LIVE_PRICING.week:ld('week',DW.map(function(d){return Object.assign({},d);}));}
-async function loadPricingRemote(){
-  try{
-    var r=await fetch(PRICING_URL,{cache:'no-store'});
-    if(!r.ok) throw new Error('pricing fetch failed');
-    var data=await r.json();
-    if(data&&typeof data==='object'&&(data.bids||data.mults||data.rules||data.week)) LIVE_PRICING=data;
-  }catch(e){console.warn('pricing load fallback',e);}
-}
-async function savePricingRemote(payload){
-  LIVE_PRICING = payload;
-  return fetch(PRICING_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-}
-function normalizeOrderRow(row){
-  var raw={};
-  try{ raw=row&&row.raw_json?JSON.parse(row.raw_json):{}; }catch(e){ raw={}; }
-  var id = raw.id || raw.client_id || ('db_'+row.id);
-  var status = row.status || raw.status || 'new';
-  var decision = row.decision || raw.decision || (status==='declined'?'declined':(status==='accepted'||status==='scheduled'||status==='complete'?'accepted':'pending'));
-  var appt = raw.appt || null;
-  if(!appt && (row.address || row.pickup_date || row.pickup_time || row.pickup_type)){
-    appt={type:row.pickup_type||'',day:row.pickup_day||'',date:row.pickup_date||'',time:row.pickup_time||'',address:row.address||'',displayText:(row.pickup_type==='sameday'?'Same-Day Pickup':((row.pickup_day||'')+(row.pickup_date?', '+row.pickup_date:'')+(row.pickup_time?' · '+row.pickup_time:'')))};
-  }
-  return Object.assign({}, raw, {
-    id:id,
-    dbId:row.id,
-    firstName: raw.firstName || raw.customer_name || row.customer_name || '',
-    lastName: raw.lastName || '',
-    phone: raw.phone || row.phone || '',
-    email: raw.email || row.email || '',
-    year: raw.year || row.year || '',
-    make: raw.make || row.make || '',
-    model: raw.model || row.model || '',
-    offer: raw.offer || row.quoted_price || 0,
-    quoted_price: row.quoted_price || raw.offer || 0,
-    zip: raw.zip || '',
-    mileage: raw.mileage || '',
-    runs: raw.runs || '',
-    condition: raw.condition || '',
-    hasTitle: raw.hasTitle || '',
-    catConverter: raw.catConverter || '',
-    notes: raw.notes || row.notes || '',
-    status: status,
-    decision: decision,
-    date: raw.date || row.created_at || '',
-    appt: appt
-  });
-}
-async function loadOrdersRemote(){
-  try{
-    var r=await fetch(ORDERS_URL,{cache:'no-store'});
-    if(!r.ok) throw new Error('orders fetch failed');
-    var data=await r.json();
-    LIVE_ORDERS = Array.isArray(data)?data.map(normalizeOrderRow):[];
-  }catch(e){console.warn('orders load fallback',e); LIVE_ORDERS = ld('orders',[]);}
-}
-async function upsertOrderRemote(sub){
-  var payload={
-    client_id:sub.id,
-    customer_name:(sub.firstName||'') + ((sub.lastName||'')?' '+sub.lastName:''),
-    phone:sub.phone||'',
-    email:sub.email||'',
-    year:sub.year||'',
-    make:sub.make||'',
-    model:sub.model||'',
-    quoted_price:Number(sub.offer||0),
-    decision:sub.status==='declined'?'declined':(sub.status==='accepted'||sub.status==='complete'||sub.status==='cancelled'?'accepted':'pending'),
-    status:sub.status==='pending'?'new':(sub.status||'new'),
-    pickup_type:sub.appt&&sub.appt.type||'',
-    pickup_day:sub.appt&&sub.appt.day||'',
-    pickup_date:sub.appt&&sub.appt.date||'',
-    pickup_time:sub.appt&&sub.appt.time||'',
-    address:sub.appt&&sub.appt.address||'',
-    notes:sub.notes||'',
-    raw_json:JSON.stringify(Object.assign({},sub,{client_id:sub.id}))
-  };
-  return fetch(ORDERS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-}
-async function bootRemote(){
-  await Promise.all([loadPricingRemote(), loadOrdersRemote()]);
-}
+function gB(){return ld('bids',Object.assign({},DB));}
+function gM(){return ld('mults',Object.assign({},DM));}
+function gR(){return ld('rules',DR.map(function(r){return Object.assign({},r);}));}
+function gO(){return ld('orders',[]);}
+function gW(){return ld('week',DW.map(function(d){return Object.assign({},d);}));}
+
 // ── FORM DROPDOWNS ───────────────────────────────────────────
 (function(){var s=document.getElementById('yrSel');for(var y=new Date().getFullYear();y>=1970;y--){var o=document.createElement('option');o.value=o.textContent=y;s.appendChild(o);}})();
 (function(){var s=document.getElementById('mkSel');Object.keys(MM).sort().forEach(function(m){var o=document.createElement('option');o.value=o.textContent=m;s.appendChild(o);});})();
@@ -846,6 +749,7 @@ function doSubmit(e){
   var offer=calcOffer(fd);
   curSub={id:'ord_'+Date.now(),firstName:fd.get('firstName'),lastName:fd.get('lastName'),phone:fd.get('phone'),zip:fd.get('zip'),year:fd.get('year'),make:fd.get('make'),model:fd.get('model'),mileage:fd.get('mileage'),runs:fd.get('runs'),condition:fd.get('condition'),hasTitle:fd.get('hasTitle'),catConverter:fd.get('catConverter'),notes:fd.get('notes'),offer:offer,status:'pending',date:new Date().toLocaleString(),appt:null};
   saveOrder(curSub);
+  fetch(FS,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(Object.assign({},curSub,{_subject:'New Quote – '+fd.get('year')+' '+fd.get('make')+' '+fd.get('model')+' | $'+offer}))}).catch(function(){});
   document.getElementById('offVeh').textContent=fd.get('year')+' '+fd.get('make')+' '+fd.get('model');
   document.getElementById('offAmt').textContent='$'+offer.toLocaleString();
   showV('offerView');
@@ -855,11 +759,12 @@ function doSubmit(e){
 function doAccept(){
   if(!curSub)return;
   curSub.status='accepted';saveOrder(curSub);
+  fetch(FS,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(Object.assign({},curSub,{_subject:'ACCEPTED – '+curSub.year+' '+curSub.make+' '+curSub.model+' | $'+curSub.offer}))}).catch(function(){});
   resetPickupType();
   showV('schedView');
 }
 function doDecline(){
-  if(curSub){curSub.status='declined';saveOrder(curSub);sendLead(Object.assign({},curSub,{subject:'Declined – '+curSub.year+' '+curSub.make}));}
+  if(curSub){curSub.status='declined';saveOrder(curSub);fetch(FS,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(Object.assign({},curSub,{_subject:'Declined – '+curSub.year+' '+curSub.make}))}).catch(function(){});}
   showV('formView');
 }
 
@@ -979,18 +884,7 @@ function confirmPickup(type){
   }
   curSub.status='accepted';
   saveOrder(curSub);
-  var appt=curSub.appt||{};
-  sendLead(Object.assign({},curSub,{
-    subject:'BOOKED – '+curSub.year+' '+curSub.make+' | '+(appt.displayText||'Pickup')+' | $'+curSub.offer,
-    pickupType:appt.type==='sameday'?'Same Day':'Scheduled',
-    pickupDay:appt.day||'',
-    pickupDate:appt.date||'',
-    pickupTime:appt.time||'',
-    pickupAddress:appt.address||'',
-    pickupDisplay:appt.displayText||'',
-    appt:'',
-    pickupDetails:''
-  }));
+  fetch(FS,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(Object.assign({},curSub,{_subject:'BOOKED – '+curSub.year+' '+curSub.make+' | '+(curSub.appt.displayText||'Pickup')+' | $'+curSub.offer,pickupDetails:curSub.appt}))}).catch(function(){});
   buildBookedCard();
   showV('bookedView');
 }
@@ -1024,21 +918,29 @@ function showV(id){
   t.style.display='block';
   t.classList.add('show');
 
-  requestAnimationFrame(function(){
-    var y = window.pageYOffset + t.getBoundingClientRect().top - 16;
-    window.scrollTo({top: Math.max(0, y), behavior:'smooth'});
-  });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-function saveOrder(sub){var orders=gO().slice();var i=orders.findIndex(function(o){return o.id===sub.id;});if(i>=0)orders[i]=sub;else orders.unshift(sub);LIVE_ORDERS=orders;sv('orders',orders);upsertOrderRemote(sub).then(function(){return loadOrdersRemote();}).then(function(){if(unlocked)renderOrders();buildApptList();}).catch(function(e){console.warn('order save fallback',e);});}
-function sendLead(payload){
-  return fetch(FS,{
+var remoteOrders=[];
+async function fetchOrdersRemote(){
+  try{
+    var res=await fetch('/orders',{cache:'no-store'});
+    var data=await res.json();
+    if(Array.isArray(data)){remoteOrders=data;sv('orders',data);return data;}
+  }catch(e){}
+  var fallback=gO();
+  remoteOrders=fallback;
+  return fallback;
+}
+function saveOrder(sub){
+  var orders=gO();
+  var i=orders.findIndex(function(o){return o.id===sub.id;});
+  if(i>=0)orders[i]=sub;else orders.unshift(sub);
+  sv('orders',orders);
+  fetch('/orders',{
     method:'POST',
-    headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify(Object.assign({
-      access_key:W3KEY,
-      from_name:'Junk Car King Florida Website'
-    },payload))
-  }).catch(function(){});
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(sub)
+  }).then(function(){ fetchOrdersRemote().then(function(){ renderOrders(); buildApptList(); }); }).catch(function(){});
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────
@@ -1050,101 +952,87 @@ function showPanel(){document.getElementById('loginBox').style.display='none';do
 function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});document.getElementById(id).classList.add('on');btn.classList.add('on');if(id==='tOrders')renderOrders();if(id==='tSched'){buildWeekGrid();buildApptList();}if(id==='tMakes'){buildBids();buildBmMakes();}if(id==='tRules')buildRules();if(id==='tMults')buildMults();}
 
 // ── ORDERS ────────────────────────────────────────────────────
-var remoteOrders = [];
-
-async function fetchOrdersRemote() {
-  try {
-    var res = await fetch('/orders', { cache: 'no-store' });
-    var data = await res.json();
-    remoteOrders = Array.isArray(data) ? data : [];
-  } catch (e) {
-    remoteOrders = gO();
-  }
-  return remoteOrders;
-}
-
-function setFilter(btn){
-  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on');
-  curFilter=btn.dataset.f;
-  renderOrders();
-}
-
+function setFilter(btn){document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');curFilter=btn.dataset.f;renderOrders();}
 async function renderOrders(){
-  var orders = await fetchOrdersRemote();
-  var q=(document.getElementById('orderSearch')||{}).value||''; q=q.toLowerCase();
-  var list=document.getElementById('ordersList'); if(!list) return;
-
+  var orders=await fetchOrdersRemote(),q=(document.getElementById('orderSearch')||{}).value||'';q=q.toLowerCase();
+  var list=document.getElementById('ordersList');if(!list)return;
   var filtered=orders.filter(function(o){
-    if(curFilter!=='all'&&o.status!==curFilter) return false;
-    if(q){
-      var h=((o.firstName||'')+' '+(o.lastName||'')+' '+(o.phone||'')+' '+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')).toLowerCase();
-      if(h.indexOf(q)<0) return false;
-    }
+    if(curFilter!=='all'&&o.status!==curFilter)return false;
+    if(q){var h=((o.firstName||'')+' '+(o.lastName||'')+' '+(o.phone||'')+' '+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')).toLowerCase();if(h.indexOf(q)<0)return false;}
     return true;
   });
-
-  if(filtered.length===0){
-    list.innerHTML='<div class="no-orders">No submissions'+(curFilter!=='all'?' in this category':'')+'.</div>';
-    return;
-  }
-
+  if(filtered.length===0){list.innerHTML='<div class="no-orders">No submissions'+(curFilter!=='all'?' in this category':'')+'.</div>';return;}
   list.innerHTML='';
-  filtered.forEach(function(o){ list.appendChild(mkOCard(o)); });
+  filtered.forEach(function(o){list.appendChild(mkOCard(o));});
 }
-
 function mkOCard(o){
-  var div=document.createElement('div');
-  div.className='ocard s-'+(o.status||'pending');
+  var div=document.createElement('div');div.className='ocard s-'+(o.status||'pending');
   var sL={pending:'⏳ Pending',accepted:'✅ Accepted',declined:'❌ Declined',complete:'✔ Complete',cancelled:'🚫 Cancelled'};
   var apptHtml='';
   if(o.appt&&o.appt.address){
-    var txt=o.appt.type==='sameday' ? '⚡ Same-day pickup' : '📅 '+(o.appt.day||'')+', '+(o.appt.date||'')+' · 🕐 '+(o.appt.time||'');
+    var txt=o.appt.type==='sameday'?'⚡ Same-day pickup':'📅 '+(o.appt.day||'')+', '+(o.appt.date||'')+' · 🕐 '+(o.appt.time||'');
     apptHtml='<div class="ocard-appt">'+txt+'<br>📍 '+o.appt.address+'</div>';
   }
-  var dbId=o._dbId||'';
-  var safeDbId=String(dbId).replace(/"/g,'&quot;');
-  div.innerHTML='    <div class="ocard-top"><div><div class="ocard-veh">'+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')+'</div><div class="ocard-date">'+(o.date||'')+'</div></div><div class="ocard-offer">$'+Number(o.offer||0).toLocaleString()+'</div></div>    <div class="ocard-meta"><span>'+(o.firstName||'')+' '+(o.lastName||'')+'</span><span>📞 '+(o.phone||'')+'</span><span>📍 '+(o.zip||'')+'</span><span>'+(o.mileage||'')+'</span><span>'+(o.runs||'')+'</span><span>'+(o.condition||'')+'</span><span>'+(o.hasTitle||'')+'</span><span>Cat: '+(o.catConverter||'')+'</span>'+(o.notes?'<span>📝 '+o.notes+'</span>':'')+'</div>'    + apptHtml + '    <span class="ostatus '+(o.status||'pending')+'">'+(sL[o.status||'pending']||'⏳ Pending')+'</span>    <div class="ocard-acts">'    + ((o.status!=='complete')?'<button class="oa oa-done" onclick="updOrder('+safeDbId+','complete')">✔ Complete</button>':'')    + ((o.status!=='cancelled')?'<button class="oa oa-cancel" onclick="updOrder('+safeDbId+','cancelled')">🚫 Cancel</button>':'')    + '<button class="oa oa-del" onclick="delOrder('+safeDbId+')">🗑 Delete</button>'    + '</div>';
+  var cardId=(o._dbId!=null?o._dbId:o.id);
+  div.innerHTML='<div class="ocard-top"><div><div class="ocard-veh">'+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')+'</div><div class="ocard-date">'+(o.date||'')+'</div></div><div class="ocard-offer">$'+Number(o.offer||0).toLocaleString()+'</div></div>'
+    +'<div class="ocard-meta"><span>'+(o.firstName||'')+' '+(o.lastName||'')+'</span><span>📞 '+(o.phone||'')+'</span><span>📍 '+(o.zip||'')+'</span><span>'+(o.mileage||'')+'</span><span>'+(o.runs||'')+'</span><span>'+(o.condition||'')+'</span><span>'+(o.hasTitle||'')+'</span><span>Cat: '+(o.catConverter||'')+'</span>'+(o.notes?'<span>📝 '+o.notes+'</span>':'')+'</div>'
+    +apptHtml+'<span class="ostatus '+(o.status||'pending')+'">'+(sL[o.status||'pending']||'⏳ Pending')+'</span>'
+    +'<div class="ocard-acts">'+((o.status!=='complete')?'<button class="oa oa-done" onclick="updOrder(''+cardId+'','complete')">✔ Complete</button>':'')+((o.status!=='cancelled')?'<button class="oa oa-cancel" onclick="updOrder(''+cardId+'','cancelled')">🚫 Cancel</button>':'')+'<button class="oa oa-del" onclick="delOrder(''+cardId+'')">🗑 Delete</button></div>';
   return div;
 }
-
-async function updOrder(dbId,s){
-  var row=remoteOrders.find(function(o){ return Number(o._dbId)===Number(dbId); });
-  if(!row) return;
+async function updOrder(id,s){
+  var orders=await fetchOrdersRemote();
+  var row=orders.find(function(o){return String(o._dbId||o.id)===String(id);});
+  if(!row)return;
   row.status=s;
-  await fetch('/orders?id='+encodeURIComponent(dbId),{
-    method:'PATCH',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(row)
+  sv('orders',orders);
+  if(row._dbId!=null){
+    await fetch('/orders?id='+encodeURIComponent(row._dbId),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(function(){});
+  }else{
+    await fetch('/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(function(){});
+  }
+  await renderOrders();
+  await buildApptList();
+}
+async function delOrder(id){if(!confirm('Delete?'))return;var orders=await fetchOrdersRemote();var row=orders.find(function(o){return String(o._dbId||o.id)===String(id);});if(row&&row._dbId!=null){await fetch('/orders?id='+encodeURIComponent(row._dbId),{method:'DELETE'}).catch(function(){});}var local=gO().filter(function(o){return String(o._dbId||o.id)!==String(id);});sv('orders',local);await renderOrders();await buildApptList();}
+async function clearOrders(){if(!confirm('Delete ALL orders?'))return;await fetch('/orders?all=1',{method:'DELETE'}).catch(function(){});sv('orders',[]);await renderOrders();await buildApptList();}
+
+// ── WEEKLY SCHEDULE ───────────────────────────────────────────
+function buildWeekGrid(){
+  var week=gW();
+  var grid=document.getElementById('weekGrid');
+  grid.innerHTML='';
+  DAYS.forEach(function(name,i){
+    var w=week[i];
+    var card=document.createElement('div');card.className='week-day-card';
+    var toggleClass='wdc-toggle'+(w.open?' open':'');
+    card.innerHTML='<div class="wdc-hdr">'
+      +'<span class="wdc-name">'+name+'</span>'
+      +'<label class="'+toggleClass+'" id="wdtog_'+i+'" onclick="toggleDay('+i+')">'
+      +(w.open?'Open':'Closed')
+      +'<span class="toggle-sw"></span></label>'
+      +'</div>'
+      +'<div id="wdtimes_'+i+'" style="'+(w.open?'':'display:none')+'">'
+      +'<div class="wdc-times">'
+      +'<label>From</label><input type="time" class="wd-from" data-day="'+i+'" value="'+(w.from||'08:00')+'">'
+      +'<label>To</label><input type="time" class="wd-to" data-day="'+i+'" value="'+(w.to||'18:00')+'">'
+      +'</div></div>'
+      +(w.open?'':'<div class="wdc-closed-msg">Day is closed</div>');
+    grid.appendChild(card);
   });
-  await renderOrders();
-  await buildApptList();
 }
-
-async function delOrder(dbId){
-  if(!confirm('Delete?')) return;
-  await fetch('/orders?id='+encodeURIComponent(dbId),{ method:'DELETE' });
-  await renderOrders();
-  await buildApptList();
-}
-
-async function clearOrders(){
-  if(!confirm('Delete ALL orders?')) return;
-  await fetch('/orders?all=1',{ method:'DELETE' });
-  await renderOrders();
-  await buildApptList();
-}
+function toggleDay(i){
+  var week=gW();week[i].open=!week[i].open;sv('week',week);buildWeekGrid();}
 
 async function buildApptList(){
-  var orders=await fetchOrdersRemote();
-  orders=orders.filter(function(o){ return o.appt&&o.appt.address; });
+  var orders=(await fetchOrdersRemote()).filter(function(o){return o.appt&&o.appt.address;});
   var list=document.getElementById('apptList');
-  if(!list) return;
-  if(orders.length===0){ list.innerHTML='<div class="no-orders">No booked appointments yet.</div>'; return; }
+  if(!list)return;
+  if(orders.length===0){list.innerHTML='<div class="no-orders">No booked appointments yet.</div>';return;}
   list.innerHTML='';
   orders.forEach(function(o){
-    var div=document.createElement('div'); div.className='appt-card';
-    var timeStr=o.appt.type==='sameday' ? '⚡ Same-day' : '📅 '+(o.appt.day||'')+', '+(o.appt.date||'')+(o.appt.time?' · '+o.appt.time:'');
+    var div=document.createElement('div');div.className='appt-card';
+    var timeStr=o.appt.type==='sameday'?'⚡ Same-day':'📅 '+(o.appt.day||'')+', '+(o.appt.date||'')+(o.appt.time?' · '+o.appt.time:'');
     div.innerHTML='<div class="appt-card-top">'+timeStr+'</div>'
       +'<div class="appt-detail"><b>'+(o.firstName||'')+' '+(o.lastName||'')+'</b> · 📞 '+(o.phone||'')+'<br>🚗 '+(o.year||'')+' '+(o.make||'')+' '+(o.model||'')+' · 💵 $'+Number(o.offer||0).toLocaleString()+'<br>📍 '+o.appt.address+'</div>';
     list.appendChild(div);
@@ -1245,26 +1133,23 @@ function buildMults(){
 function adjMult(btn,delta){var inp=btn.parentElement.querySelector('.bi');var v=Math.round((parseFloat(inp.value||1)+delta)*100)/100;inp.value=Math.max(0.1,Math.min(2,v)).toFixed(2);}
 
 // ── SAVE ALL ──────────────────────────────────────────────────
-async function saveAll(){
-  var week=gW().map(function(d){return Object.assign({},d);});
+function saveAll(){
+  // week schedule
+  var week=gW();
   document.querySelectorAll('.wd-from').forEach(function(inp){week[inp.dataset.day].from=inp.value;});
   document.querySelectorAll('.wd-to').forEach(function(inp){week[inp.dataset.day].to=inp.value;});
+  sv('week',week);
+  // rules
   var rules=[];
   document.querySelectorAll('.rule-row').forEach(function(row){rules.push({make:row.querySelector('.r-make').value,model:row.querySelector('.r-model').value,yearFrom:row.querySelector('.r-yfrom').value,yearTo:row.querySelector('.r-yto').value,bid:row.querySelector('.r-bid').value});});
-  var bids={};document.querySelectorAll('[data-make]').forEach(function(inp){bids[inp.dataset.make]=parseFloat(inp.value)||400;});
-  var mults={};document.querySelectorAll('[data-mult]').forEach(function(inp){mults[inp.dataset.mult]=parseFloat(inp.value)||1;});
-  var payload={week:week,rules:rules,bids:bids,mults:mults};
-  sv('week',week); sv('rules',rules); sv('bids',bids); sv('mults',mults);
-  try{await savePricingRemote(payload);}catch(e){console.warn('pricing save fallback',e);}
+  sv('rules',rules);
+  // bids
+  var bids={};document.querySelectorAll('[data-make]').forEach(function(inp){bids[inp.dataset.make]=parseFloat(inp.value)||400;});sv('bids',bids);
+  // mults
+  var mults={};document.querySelectorAll('[data-mult]').forEach(function(inp){mults[inp.dataset.mult]=parseFloat(inp.value)||1;});sv('mults',mults);
   ['sv0','sv1','sv2','sv3'].forEach(function(id){var el=document.getElementById(id);if(el){el.classList.add('show');setTimeout(function(){el.classList.remove('show');},3000);}});
   buildApptList();
 }
-
-bootRemote().then(function(){
-  try{ fillModels(); }catch(e){}
-  if(unlocked){showPanel();}
-}).catch(function(e){console.warn('boot fallback',e);});
-
 </script>
 
 </body>
