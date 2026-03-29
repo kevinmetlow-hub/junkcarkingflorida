@@ -54,6 +54,7 @@ export async function onRequestPatch(context) {
   try {
     const url = new URL(context.request.url);
     const dbId = url.searchParams.get("id");
+
     if (!dbId) {
       return new Response(JSON.stringify({ error: "Missing id" }), {
         status: 400,
@@ -75,6 +76,7 @@ export async function onRequestPatch(context) {
     return new Response(JSON.stringify({ success: true }), {
       headers: { "Content-Type": "application/json" }
     });
+
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
@@ -98,6 +100,7 @@ export async function onRequestDelete(context) {
           headers: { "Content-Type": "application/json" }
         });
       }
+
       await context.env.DB.prepare(`
         DELETE FROM orders
         WHERE id = ?
@@ -107,6 +110,7 @@ export async function onRequestDelete(context) {
     return new Response(JSON.stringify({ success: true }), {
       headers: { "Content-Type": "application/json" }
     });
+
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
