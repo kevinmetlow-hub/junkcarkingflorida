@@ -31,15 +31,34 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
+    const orderId = body?.id || null;
 
-    await context.env.DB.prepare(`
+    if (orderId) {
+      const existing = await context.env.DB.prepare(`
+        SELECT id FROM orders
+        WHERE json_extract(raw_json, '$.id') = ?
+        LIMIT 1
+      `).bind(orderId).first();
+
+      if (existing && existing.id) {
+        await context.env.DB.prepare(`
+          UPDATE orders
+          SET raw_json = ?, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?
+        `).bind(JSON.stringify(body), existing.id).run();
+
+        return new Response(JSON.stringify({ success: true, id: existing.id, updated: true }), {
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+    }
+
+    const result = await context.env.DB.prepare(`
       INSERT INTO orders (raw_json)
       VALUES (?)
-    `).bind(
-      JSON.stringify(body)
-    ).run();
+    `).bind(JSON.stringify(body)).run();
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ success: true, id: result.meta?.last_row_id || null }), {
       headers: { "Content-Type": "application/json" }
     });
   } catch (err) {
@@ -54,7 +73,6 @@ export async function onRequestPatch(context) {
   try {
     const url = new URL(context.request.url);
     const dbId = url.searchParams.get("id");
-
     if (!dbId) {
       return new Response(JSON.stringify({ error: "Missing id" }), {
         status: 400,
@@ -68,15 +86,11 @@ export async function onRequestPatch(context) {
       UPDATE orders
       SET raw_json = ?, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `).bind(
-      JSON.stringify(body),
-      dbId
-    ).run();
+    `).bind(JSON.stringify(body), dbId).run();
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { "Content-Type": "application/json" }
     });
-
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
@@ -100,17 +114,12 @@ export async function onRequestDelete(context) {
           headers: { "Content-Type": "application/json" }
         });
       }
-
-      await context.env.DB.prepare(`
-        DELETE FROM orders
-        WHERE id = ?
-      `).bind(dbId).run();
+      await context.env.DB.prepare(`DELETE FROM orders WHERE id = ?`).bind(dbId).run();
     }
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { "Content-Type": "application/json" }
     });
-
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
